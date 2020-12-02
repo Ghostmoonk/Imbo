@@ -58,16 +58,19 @@ public class Character : MonoBehaviour
         //Debug.Log(velocity);
         if (Input.GetButtonDown("Jump") && grounded)
         {
+            Debug.Log("jump");
             Jump();
         }
 
         //controller.Move(velocity * Time.deltaTime);
 
         rb.velocity = velocity;
+        Debug.Log(rb.velocity);
     }
 
     private void Jump()
     {
         velocity.y += jumpForce;
+        Debug.Log(velocity);
     }
 }
