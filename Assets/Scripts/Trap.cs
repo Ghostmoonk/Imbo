@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class Trap : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void OnTriggerEnter(Collider collider)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Debug.Log(collider);
+        if (collider.gameObject.tag == "Player")
+        {
+            collider.gameObject.GetComponent<Character>().Die();
+        }
     }
 }
