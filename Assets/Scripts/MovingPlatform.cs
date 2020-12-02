@@ -22,7 +22,7 @@ public class MovingPlatform : MonoBehaviour
 
     private void Move()
     {
-        transform.DOMove(currentTarget.target.position, currentTarget.speed).OnComplete(() => { IncrementTarget(); Move(); }).SetEase(movingEase).SetDelay(currentTarget.delay);
+        transform.DOMove(currentTarget.target.position, currentTarget.timeToReach).OnComplete(() => { IncrementTarget(); Move(); }).SetEase(movingEase).SetDelay(currentTarget.delay);
     }
 
     private void IncrementTarget()
@@ -56,6 +56,6 @@ public class MovingPlatform : MonoBehaviour
 public class TargetSpeed
 {
     public Transform target;
-    public float speed;
+    public float timeToReach;
     public float delay;
 }

@@ -7,16 +7,22 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Character : MonoBehaviour
 {
+    #region Components
+    //CharacterController controller;
+    Rigidbody rb;
+    Collider col;
+    Animator animator;
+    #endregion
+
     Vector3 respawnPosition;
     Vector3 velocity;
     [Range(1, 150)]
     [SerializeField] float speed;
-    [SerializeField] float gravity;
+    [SerializeField] float gravity = 9.81f;
+    [SerializeField] AnimationCurve acceleration;
+    [SerializeField] float accelerationTime;
     [Range(1f, 20f)]
     [SerializeField] float jumpForce;
-    //CharacterController controller;
-    Rigidbody rb;
-    Collider col;
     bool grounded;
 
     [SerializeField] LayerMask groundMask;
@@ -27,12 +33,24 @@ public class Character : MonoBehaviour
         respawnPosition = transform.position;
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
+        animator = GetComponent<Animator>();
     }
 
 
     private void Update()
     {
-        velocity.x = Input.GetAxis("Horizontal") * speed;
+        if (Input.GetAxis("Horizontal") != 0f)
+            accelerationTime += Time.deltaTime;
+        else
+        {
+            accelerationTime -= Time.deltaTime;
+        }
+
+        accelerationTime = Mathf.Clamp(accelerationTime, 0, acceleration[acceleration.length - 1].time);
+        Debug.Log(acceleration[acceleration.length - 1].time);
+        velocity.x = Mathf.Lerp(velocity.x, Input.GetAxis("Horizontal") * speed, acceleration.Evaluate(accelerationTime));
+
+
         //Gravity
         velocity.y -= gravity * Time.deltaTime;
 
@@ -63,6 +81,8 @@ public class Character : MonoBehaviour
         //controller.Move(velocity * Time.deltaTime);
 
         rb.velocity = velocity;
+        animator.SetFloat("MoveBlend", Mathf.InverseLerp(0, Mathf.Abs(Input.GetAxis("Horizontal") * speed), Mathf.Abs(velocity.x)));
+        Debug.Log(Mathf.InverseLerp(0, Mathf.Abs(Input.GetAxis("Horizontal") * speed), Mathf.Abs(velocity.x)));
     }
 
     private void Jump()
@@ -76,7 +96,7 @@ public class Character : MonoBehaviour
         Debug.Log("die");
         rb.detectCollisions = false;
         transform.position = respawnPosition;
-        transform.rotation = Quaternion.identity;
+        //transform.rotation = Quaternion.identity;
         rb.detectCollisions = true;
     }
 }
